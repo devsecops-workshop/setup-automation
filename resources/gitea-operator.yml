@@ -1,0 +1,13 @@
+apiVersion: gpte.opentlc.com/v1
+kind: Gitea
+metadata:
+  name: repository
+  namespace: openshift-operators
+spec:
+  giteaImageTag: latest
+  giteaSsl: true
+  giteaVolumeSize: 4Gi
+  postgresqlVolumeSize: 4Gi
+  giteaAdminUser: gitea
+  giteaAdminPassword: "gitea"
+  giteaAdminEmail: opentlc-mgr@redhat.com
