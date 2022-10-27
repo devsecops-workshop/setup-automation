@@ -1,15 +1,20 @@
 ---
 - name: Create Gitea Namespace
   command: oc new-project git
+  ignore_errors: true 
 
 - name: Install Gitea Operator
-  command: oc apply -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/gitea-operator/master/catalog_source.yam
+  command: oc apply -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/gitea-operator/master/catalog_source.yaml
+  ignore_errors: true 
 
 - name: Switch project 
   command: oc project openshift-operators
+  ignore_errors: true 
 
 - name: Install Gitea Operator Subscription
   command: oc apply -f ./files/gitea-operator-subscription.yml
+  ignore_errors: true 
 
 - name: Install Gitea Operator Instance
   command: oc apply -f ./resources/gitea-operator.yml
+  ignore_errors: true 
