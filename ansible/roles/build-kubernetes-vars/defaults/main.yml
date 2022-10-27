@@ -1,2 +1,2 @@
 kubeconfig_dir: "/home/lab-user/.kube"
-new_kubeconfig_dir: "{{ playbook_dir }"
+new_kubeconfig_dir: "{{ playbook_dir }}"
