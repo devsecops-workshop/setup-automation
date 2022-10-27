@@ -1,0 +1,6 @@
+---
+- hosts: host
+  tasks:
+  - import_role:
+      name: gitea
+      tasks_from: install-gitea.yml
