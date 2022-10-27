@@ -1,15 +1,9 @@
 ---
 - name: Create Gitea Namespace
-  community.okd.k8s:
-    name: gitea
-    api_version: v1
-    kind: Project
-    state: present
+  command: oc new-project git
 
 - name: Install Gitea Operator
-  community.okd.k8s:
-    state: present
-    src: https://raw.githubusercontent.com/redhat-gpte-devopsautomation/gitea-operator/master/catalog_source.yaml
+  command: oc apply -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/gitea-operator/master/catalog_source.yam
 
 - name: Switch project 
   command: oc project openshift-operators
