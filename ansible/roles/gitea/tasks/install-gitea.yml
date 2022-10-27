@@ -10,3 +10,12 @@
   community.okd.k8s:
     state: present
     src: https://raw.githubusercontent.com/redhat-gpte-devopsautomation/gitea-operator/master/catalog_source.yaml
+
+- name: Switch project 
+  command: oc project openshift-operators
+
+- name: Install Gitea Operator Subscription
+  command: oc apply -f ./files/gitea-operator-subscription.yml
+
+- name: Install Gitea Operator Instance
+  command: oc apply -f ./resources/gitea-operator.yml
