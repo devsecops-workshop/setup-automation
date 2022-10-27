@@ -3,12 +3,12 @@
 - name: Create own kubeconfig directory
   file:
     state: directory
-    path: "{{ kubeconfig_dir }}/config/"
+    path: "{{ new_kubeconfig_dir }}/config/"
     mode: 0755
 
 - name: Copy kubeconfig
   copy:
-    src: "{{ kubeconfig_dir }}/auth/kubeconfig"
+    src: "{{ kubeconfig_dir }}/config"
     dest: "{{ new_kubeconfig_dir }}/config/kubeconfig"
     remote_src: yes
     mode: 0644
