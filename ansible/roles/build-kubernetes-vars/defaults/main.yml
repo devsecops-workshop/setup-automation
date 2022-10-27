@@ -1,2 +1,3 @@
 kubeconfig_dir: "/home/lab-user/.kube"
 new_kubeconfig_dir: "{{ playbook_dir }}"
+cluster_name: "lab_cluster"
