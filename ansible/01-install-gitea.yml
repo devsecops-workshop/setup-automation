@@ -1,5 +1,5 @@
 ---
-- hosts: host
+- hosts: localhost
   tasks:
   - import_role:
       name: gitea
