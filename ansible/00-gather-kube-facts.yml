@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  tasks:
+  - import_role:
+      name: build-kubernetes-vars
+      tasks_from: build-k8s-vars.yml
