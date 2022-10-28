@@ -6,6 +6,7 @@ Ansible automation to install parts of the workshop components
 
 - sudo yum install -y python3.8
 - sudo pip3 install openshift pyyaml kubernetes
+- sudo ansible-galaxy collection install community.kubernetes
 
 
 ## Usage
