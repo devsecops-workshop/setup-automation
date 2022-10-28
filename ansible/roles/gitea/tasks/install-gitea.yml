@@ -53,7 +53,7 @@
       kind: Gitea
       metadata:
         name: repository
-        namespace: openshift-operators
+        namespace: git
       spec:
         giteaImageTag: latest
         giteaSsl: true
