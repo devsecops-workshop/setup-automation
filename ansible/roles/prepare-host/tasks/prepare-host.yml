@@ -1,0 +1,15 @@
+---
+
+- name: Check for installed dependencies
+  pip:
+    name: {{ item }}
+    state: present
+  loop:
+    - openshift
+    - pyyaml
+    - kubernetes
+
+- name: Install roles from Ansible Galaxy
+  command: ansible-galaxy install {{ item.item }}
+  with_items:
+    - "{{ community.kubernetes }}"
