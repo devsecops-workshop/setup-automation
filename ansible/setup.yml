@@ -1,2 +1,3 @@
 ---
 - import_playbook: 01-install-gitea.yml
+- import_playbook: 02-install-odf.yml
