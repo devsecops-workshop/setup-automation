@@ -4,7 +4,10 @@
   pip:
     name: "{{ item }}"
     state: present
-  loop: "{{ openshift, pyyaml, kubernetes}}"
+  loop: 
+    - openshift
+    - pyyaml
+    - kubernetes
 
 - name: Install roles from Ansible Galaxy
   command: ansible-galaxy install {{ item.item }}
