@@ -28,3 +28,6 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
         startingCSV: odf-operator.v4.10.7
+
+- name: Include ODF CustomResource instances
+  include_tasks: "custom-resource-instances.yml"
