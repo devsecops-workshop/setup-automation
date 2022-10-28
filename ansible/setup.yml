@@ -1,3 +1,2 @@
 ---
-- import_playbook: 00-gather-kube-facts.yml
 - import_playbook: 01-install-gitea.yml

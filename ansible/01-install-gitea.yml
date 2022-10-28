@@ -1,5 +1,7 @@
 ---
 - hosts: localhost
+  vars_files:
+  - ../cluster.yml
   tasks:
   - import_role:
       name: gitea

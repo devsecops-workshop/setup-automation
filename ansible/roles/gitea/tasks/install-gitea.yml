@@ -3,6 +3,17 @@
   command: oc new-project git
   ignore_errors: true 
 
+- name: Create Gitea Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: v1
+      kind: Project
+      metadata:
+        name: git
+      spec: 
+
 - name: Install Gitea Operator
   command: oc apply -f https://raw.githubusercontent.com/redhat-gpte-devopsautomation/gitea-operator/master/catalog_source.yaml
   ignore_errors: true 
