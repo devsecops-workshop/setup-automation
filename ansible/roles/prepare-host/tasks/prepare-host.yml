@@ -2,7 +2,7 @@
 
 - name: Check for installed dependencies
   pip:
-    name: {{ item }}
+    name: "{{ item }}"
     state: present
   loop: "{{ openshift, pyyaml, kubernetes}}"
 
