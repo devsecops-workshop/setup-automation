@@ -46,6 +46,7 @@
 
 - name: Install Gitea Instance
   delay: 30
+  retries: 5
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
