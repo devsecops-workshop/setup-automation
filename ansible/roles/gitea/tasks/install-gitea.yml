@@ -44,11 +44,11 @@
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
 
-- name: Check if Gtitea CRD is available
+- name: Check if Gitea CRD is available
   command: oc get crd giteas.gpte.opentlc.com 
   register: crd_status
-  retries: 60
-  delay: 30
+  retries: 20
+  delay: 10
   until: crd_status.rc == 0
 
 - name: Install Gitea Instance
