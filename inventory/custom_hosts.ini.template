@@ -1,0 +1,3 @@
+[rhpdsclusters]
+<SSH JUMPHOST HOSTNAME> ansible_user=<SSH USER> ansible_password=<SSH PASSWORD>
+    
