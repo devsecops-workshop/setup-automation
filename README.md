@@ -4,7 +4,6 @@ Ansible automation to install parts of the workshop components
 
 ## pre
 
-- sudo yum install -y python3.8
 - sudo pip3 install openshift pyyaml kubernetes
 - sudo ansible-galaxy collection install community.kubernetes
 
@@ -13,3 +12,8 @@ Ansible automation to install parts of the workshop components
 
 - Make sure you have Ansible installed
 - Run the playbook e.g. `ansible-playbook setup.yml`
+
+
+
+## Sifas Notes
+oc get nodes | grep -v master | awk '{ print $1 }' | grep -v NAME
