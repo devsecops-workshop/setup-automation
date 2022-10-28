@@ -44,6 +44,10 @@
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
 
+- name: Waiting for Gitea Operator
+  pause:
+    minutes: 1
+
 - name: Install Gitea Operator Instance
   kubernetes.core.k8s:
     state: present
