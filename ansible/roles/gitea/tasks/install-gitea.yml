@@ -4,7 +4,7 @@
   ignore_errors: true 
 
 - name: Create Gitea Namespace
-  kubernetes.core.k8s:
+  kubernetes.core:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition:
