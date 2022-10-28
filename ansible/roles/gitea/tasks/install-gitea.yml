@@ -48,7 +48,7 @@
   command: oc get crd giteas.gpte.opentlc.com 
   register: crd_status
   retries: 20
-  delay: 10
+  delay: 5
   until: crd_status.rc == 0
 
 - name: Install Gitea Instance
