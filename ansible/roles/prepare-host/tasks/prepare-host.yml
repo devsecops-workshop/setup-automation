@@ -1,6 +1,7 @@
 ---
 
 - name: Check for installed dependencies
+  become: true
   pip:
     name: "{{ item }}"
     state: present
@@ -10,6 +11,4 @@
     - kubernetes
 
 - name: Install roles from Ansible Galaxy
-  command: ansible-galaxy install {{ item.item }}
-  with_items:
-    - "{{ community.kubernetes }}"
+  command: ansible-galaxy collection install community.kubernetes
