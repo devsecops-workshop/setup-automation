@@ -2,3 +2,7 @@
 - import_playbook: 00-prepare-host.yml
 - import_playbook: 01-install-gitea.yml
 - import_playbook: 02-install-odf.yml
+- import_playbook: 03-install-quay.yml
+- import_playbook: 04-install-pipelines.yml
+- import_playbook: 05-install-gitops.yml
+- import_playbook: 06-install-acs.yml
