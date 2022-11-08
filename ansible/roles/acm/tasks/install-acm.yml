@@ -1,0 +1,48 @@
+---
+
+- name: Install ACM Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: advanced-cluster-management
+        namespace: open-cluster-management
+      spec:
+        channel: release-2.6
+        name: advanced-cluster-management
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+        installPlanApproval: Automatic
+
+- name: Check if ACM CRD is available
+  command: oc get crd multiclusterhubs.operator.open-cluster-management.io 
+  register: crd_status
+  retries: 20
+  delay: 5
+  until: crd_status.rc == 0
+
+- name: Create open-cluster-management Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: project.openshift.io/v1
+      kind: Project
+      metadata:
+        name: open-cluster-management
+      spec:  
+
+- name: Install MultiClusterHub Instance
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: operator.open-cluster-management.io/v1
+      kind: MultiClusterHub
+      metadata:
+        name: multiclusterhub
+        namespace: open-cluster-management
+      spec:        

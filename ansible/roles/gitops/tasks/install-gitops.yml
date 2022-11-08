@@ -1,0 +1,107 @@
+---
+
+- name: Install Gitops Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: openshift-gitops-operator
+        namespace: openshift-operators
+      spec:
+        channel: stable
+        name: openshift-gitops-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+        installPlanApproval: Automatic
+
+- name: Check if Gitops CRD is available
+  command: oc get crd argocds.argoproj.io
+  register: crd_status
+  retries: 20
+  delay: 5
+  until: crd_status.rc == 0
+
+- name: Create workshop-prod Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: project.openshift.io/v1
+      kind: Project
+      metadata:
+        name: workshop-prod
+      spec:
+
+- name: Install Gitops Instance
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: argoproj.io/v1alpha1
+      kind: ArgoCD
+      metadata:
+        name: argocd
+        namespace: workshop-prod
+      spec:
+        server:
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 125m
+              memory: 128Mi
+          route:
+            enabled: true
+        rbac:
+          defaultPolicy: ''
+          policy: |
+            g, system:cluster-admins, role:admin
+          scopes: '[groups]'
+        repo:
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+        dex:
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          openShiftOAuth: true
+        ha:
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          enabled: false
+        redis:
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+        controller:
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 2048Mi
+            requests:
+              cpu: 250m
+              memory: 1024Mi     
+
+
