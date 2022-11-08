@@ -1,7 +1,12 @@
 ---
 
-- name: Check for installed dependencies
+- name: Install Ansible
   become: true
+  ansible.builtin.dnf:
+    name: ansible
+    state: latest
+
+- name: Check for installed dependencies
   pip:
     name: "{{ item }}"
     state: present
