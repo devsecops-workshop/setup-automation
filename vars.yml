@@ -1,2 +1,3 @@
 ---
 k8s_kubeconfig: "/home/lab-user/.kube/config"
+include_quay_bridge: true
