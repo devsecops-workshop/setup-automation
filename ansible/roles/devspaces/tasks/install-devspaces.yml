@@ -17,7 +17,7 @@
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
 
-- name: Check if ACS CRD is available
+- name: Check if DevSpaces CRD is available
   command: oc get crd devworkspaceoperatorconfigs.controller.devfile.io  
   register: crd_status
   retries: 20

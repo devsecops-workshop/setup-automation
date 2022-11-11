@@ -7,6 +7,7 @@
     state: latest
 
 - name: Check for installed dependencies
+  become: true
   pip:
     name: "{{ item }}"
     state: present
