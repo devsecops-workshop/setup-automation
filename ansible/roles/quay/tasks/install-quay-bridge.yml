@@ -18,6 +18,13 @@
         sourceNamespace: openshift-marketplace
         startingCSV: quay-bridge-operator.v3.7.10
 
+- name: Check if Quay Instance URL is available
+  command: oc get route -n quay quay-quay
+  register: quay_url
+  retries: 20
+  delay: 5
+  until: quay_url.rc == 0
+
 - name: Get Quay Instance URL
   shell: "oc get route -n quay quay-quay | grep -v HOST | awk '{ print $2 }'"
   register: route_url
