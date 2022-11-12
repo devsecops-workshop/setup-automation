@@ -1,10 +1,18 @@
 ---
 - import_playbook: 00-prepare-host.yml
-#- import_playbook: 01-install-gitea.yml
-#- import_playbook: 02-install-odf.yml
-#- import_playbook: 03-install-devspaces.yml
+- import_playbook: 01-install-gitea.yml
+  when: install_gitea 
+- import_playbook: 02-install-odf.yml
+  when: install_odf
+- import_playbook: 03-install-devspaces.yml
+  when: install_devspaces
 - import_playbook: 04-install-quay.yml
-#- import_playbook: 05-install-pipelines.yml
-#- import_playbook: 06-install-gitops.yml
-#- import_playbook: 07-install-acs.yml
-#- import_playbook: 08-install-acm.yml
+  when: install_quay
+- import_playbook: 05-install-pipelines.yml
+  when: install_pipelines
+- import_playbook: 06-install-gitops.yml
+  when: install_gitops
+- import_playbook: 07-install-acs.yml
+  when: install_acs
+- import_playbook: 08-install-acm.yml
+  when: install_acm

@@ -93,6 +93,6 @@
 
 - name: Include Quay Bridge Operator
   include_tasks: "install-quay-bridge.yml"
-  when:  include_quay_bridge = true
+  when:  install_quay_bridge
 
 
