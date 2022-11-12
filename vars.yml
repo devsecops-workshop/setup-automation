@@ -1,6 +1,6 @@
 ---
 k8s_kubeconfig: "/home/lab-user/.kube/config"
-install_gitea: true
+install_gitea: false
 install_odf: false
 install_devspaces: false
 install_quay: true
