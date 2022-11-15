@@ -11,6 +11,22 @@
         name: openshift-storage
       spec: 
 
+- name: Create ODF OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        annotations:
+          olm.providedAPIs: CephBlockPool.v1.ceph.rook.io,CephBucketNotification.v1.ceph.rook.io,CephBucketTopic.v1.ceph.rook.io,CephClient.v1.ceph.rook.io,CephCluster.v1.ceph.rook.io,CephFilesystem.v1.ceph.rook.io,CephFilesystemMirror.v1.ceph.rook.io,CephFilesystemSubVolumeGroup.v1.ceph.rook.io,CephNFS.v1.ceph.rook.io,CephObjectRealm.v1.ceph.rook.io,CephObjectStore.v1.ceph.rook.io,CephObjectStoreUser.v1.ceph.rook.io,CephObjectZone.v1.ceph.rook.io,CephObjectZoneGroup.v1.ceph.rook.io,CephRBDMirror.v1.ceph.rook.io,OCSInitialization.v1.ocs.openshift.io,ObjectBucket.v1alpha1.objectbucket.io,ObjectBucketClaim.v1alpha1.objectbucket.io,StorageCluster.v1.ocs.openshift.io,StorageConsumer.v1alpha1.ocs.openshift.io,VolumeReplication.v1alpha1.replication.storage.openshift.io,VolumeReplicationClass.v1alpha1.replication.storage.openshift.io
+        generateName: openshift-storage-
+        namespace: openshift-storage
+      spec:
+        targetNamespaces:
+        - openshift-storage
+
 - name: Install ODF Operator Subscription
   kubernetes.core.k8s:
     state: present
@@ -29,5 +45,15 @@
         sourceNamespace: openshift-marketplace
         startingCSV: odf-operator.v4.10.7
 
+- name: Get worker nodes for labeling
+  shell: "oc get nodes | grep worker | awk '{print $1}'"
+  register: worker_nodes
+
+- name: Label worker nodes
+  command: oc label node -l node-role.kubernetes.io/worker= cluster.ocs.openshift.io/openshift-storage= --overwrite
+  with_items: "{worker_nodes.stdout}"
+
 - name: Include ODF CustomResource instances
   include_tasks: "custom-resource-instances.yml"
+
+  

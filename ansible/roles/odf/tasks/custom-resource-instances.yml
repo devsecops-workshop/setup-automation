@@ -1,16 +1,77 @@
 ---
 
+- name: Check if ODF CRD is available
+  command: oc get crd storageclusters.ocs.openshift.io
+  register: crd_status
+  retries: 20
+  delay: 5
+  until: crd_status.rc == 0
+
 - name: Instantiate storage-system
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition:
-      apiVersion: odf.openshift.io/v1alpha1
-      kind: StorageSystem
+      apiVersion: ocs.openshift.io/v1
+      kind: StorageCluster
       metadata:
-        name: ocs-storagecluster-storagesystem
-        namespace: openshift-storage
-      spec:
-        kind: storagecluster.ocs.openshift.io/v1
+        annotations:
+          uninstall.ocs.openshift.io/cleanup-policy: delete
+          uninstall.ocs.openshift.io/mode: graceful
+        finalizers:
+        - storagecluster.ocs.openshift.io
         name: ocs-storagecluster
         namespace: openshift-storage
+      spec:
+
+- name: Instantiate storage-cluster
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: ocs.openshift.io/v1
+      kind: StorageCluster
+      metadata:
+        annotations:
+          uninstall.ocs.openshift.io/cleanup-policy: delete
+          uninstall.ocs.openshift.io/mode: graceful
+        name: ocs-storagecluster
+        namespace: openshift-storage
+        finalizers:
+          - storagecluster.ocs.openshift.io
+      spec:
+        arbiter: {}
+        encryption:
+          kms: {}
+        externalStorage: {}
+        managedResources:
+          cephBlockPools: {}
+          cephCluster: {}
+          cephConfig: {}
+          cephDashboard: {}
+          cephFilesystems: {}
+          cephObjectStoreUsers: {}
+          cephObjectStores: {}
+        mirroring: {}
+        nodeTopologies: {}
+        storageDeviceSets:
+          - config: {}
+            resources: {}
+            placement: {}
+            name: ocs-deviceset-gp2
+            dataPVCTemplate:
+              metadata: {}
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 2Ti
+                storageClassName: gp2
+                volumeMode: Block
+              status: {}
+            count: 1
+            replica: 3
+            portable: true
+            preparePlacement: {}
+        version: 4.10.0
