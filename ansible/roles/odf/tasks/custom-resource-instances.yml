@@ -75,3 +75,77 @@
             portable: true
             preparePlacement: {}
         version: 4.10.0
+
+
+- name: Instantiate nooba
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: noobaa.io/v1alpha1
+  kind: NooBaa
+  metadata:
+    name: noobaa
+    namespace: openshift-storage
+    ownerReferences:
+      - apiVersion: ocs.openshift.io/v1
+        blockOwnerDeletion: true
+        controller: true
+        kind: StorageCluster
+        name: ocs-storagecluster
+    finalizers:
+      - noobaa.io/graceful_finalizer
+    labels:
+      app: noobaa
+  spec:
+    security:
+      kms: {}
+    coreResources:
+      limits:
+        cpu: '1'
+        memory: 4Gi
+      requests:
+        cpu: '1'
+        memory: 4Gi
+    dbResources:
+      limits:
+        cpu: 500m
+        memory: 4Gi
+      requests:
+        cpu: 500m
+        memory: 4Gi
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: cluster.ocs.openshift.io/openshift-storage
+                  operator: Exists
+    dbVolumeResources:
+      requests:
+        storage: 50Gi
+    cleanupPolicy: {}
+    dbType: postgres
+    image: >-
+      registry.redhat.io/odf4/mcg-core-rhel8@sha256:92eda1b6f4a3074fc6143c769303ba381abec7c770556241ac21742307f20975
+    dbStorageClass: ocs-storagecluster-ceph-rbd
+    pvPoolDefaultStorageClass: ocs-storagecluster-ceph-rbd
+    tolerations:
+      - effect: NoSchedule
+        key: node.ocs.openshift.io/storage
+        operator: Equal
+        value: 'true'
+    dbImage: >-
+      registry.redhat.io/rhel8/postgresql-12@sha256:22d9a196645625a312d0e33d409c063603d5eaa8ebc1db4971a4643d25b01b65
+    endpoints:
+      maxCount: 2
+      minCount: 1
+      resources:
+        limits:
+          cpu: '1'
+          memory: 2Gi
+        requests:
+          cpu: '1'
+          memory: 2Gi
+    labels:
+      monitoring: {}
