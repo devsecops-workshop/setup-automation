@@ -1,0 +1,79 @@
+---
+
+- name: Create ODF Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'storage-namespace.yml' ) | from_yaml }}"
+
+- name: Create ODF OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+
+- name: Install ODF Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-subscription.yml' ) | from_yaml }}"
+
+- name: Discovering worker nodes
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: v1
+    kind: Node
+    label_selectors:
+      - node-role.kubernetes.io/worker
+  register: worker_nodes
+
+- fail:
+    msg: "Less than 3 worker nodes detected. Cannot install Ceph..."
+  when: worker_nodes.resources | length < 3
+
+- set_fact:
+    ceph_worker_nodes: "{{ worker_nodes | json_query('resources[*].metadata.name') }}"
+
+- name: "Adding Ceph labels to worker nodes"
+  shell: "oc label nodes --overwrite {{ item }} cluster.ocs.openshift.io/openshift-storage=''"
+  loop: "{{ ceph_worker_nodes }}"
+
+- name: "Get Installed CSV"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: operators.coreos.com/v1alpha1
+    kind: Subscription
+    name: "odf-operator"
+    namespace: "openshift-storage"
+  register: r_subscription
+  retries: 30
+  delay: 5
+  until:
+    - r_subscription.resources[0].status.currentCSV is defined
+    - r_subscription.resources[0].status.currentCSV | length > 0
+
+- name: "Wait until CSV is installed"
+  kubernetes.core.k8s_info:
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    name: "{{ r_subscription.resources[0].status.currentCSV }}"
+    namespace: "openshift-storage"
+  register: r_csv
+  retries: 30
+  delay: 30
+  until:
+    - r_csv.resources[0].status.phase is defined
+    - r_csv.resources[0].status.phase | length > 0
+    - r_csv.resources[0].status.phase == "Succeeded"
+  ignore_errors: true
+
+- name: Enable Console Plugin
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    state: present
+    definition: "{{ lookup('file', 'console-plugin.yml' ) | from_yaml }}"
+
+- name: Include ODF CustomResource instances
+  include_tasks: "install-odf-custom-resource-instances.yml"
+
+  
