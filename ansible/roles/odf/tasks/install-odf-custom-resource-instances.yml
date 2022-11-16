@@ -1,3 +1,8 @@
+- name: "Create Storage System CRD"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'storage-instance/storagesystemcrd.yml') }}"
+
 - name: "Create Storage System"
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig }}"
