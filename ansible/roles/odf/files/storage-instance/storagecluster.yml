@@ -6,7 +6,7 @@ metadata:
 spec:
   manageNodes: false
   storageDeviceSets:
-  - name: oocs-deviceset-gp2
+  - name: ocs-deviceset-gp2
     count: 1
     replica: 3
     resources: {}

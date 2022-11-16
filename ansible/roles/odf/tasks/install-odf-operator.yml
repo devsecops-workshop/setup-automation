@@ -6,6 +6,9 @@
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-namespace.yml' ) | from_yaml }}"
 
+- name: Enable Monitoring for storage namespace
+  command: oc label namespace openshift-storage openshift.io/cluster-monitoring="true" --overwrite 
+
 - name: Create ODF OperatorGroup
   kubernetes.core.k8s:
     state: present
