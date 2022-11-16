@@ -23,21 +23,21 @@
     wait_timeout: 360
 
 - name: "Create ObjectStore"
-  kubernetes.core.k8s_info:
+  kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-instance/rgw_objectstore.yml') }}"
 
 - name: "Create ObjectStore Route"
-  kubernetes.core.k8s_info:
+  kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-instance/objectstore-route.yml') }}"
 
 - name: "Create StorageClass"
-  kubernetes.core.k8s_info:
+  kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-instance/rgw_storageclass.yml') }}"
 
 - name: "Deploy Ceph Toolbox"
-  kubernetes.core.k8s_info:
+  kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-instance/toolbox.yml') }}"
