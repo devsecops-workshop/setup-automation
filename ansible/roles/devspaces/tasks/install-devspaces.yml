@@ -35,6 +35,10 @@
         name: openshift-workspaces
       spec:
 
+- name: Wait for DevSpaces API to become available
+  ansible.builtin.pause:
+    minutes: 1      
+
 - name: Install Devspaces Instance
   kubernetes.core.k8s:
     state: present
