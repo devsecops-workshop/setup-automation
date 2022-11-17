@@ -1,0 +1,8 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  annotations:
+    olm.providedAPIs: QuayRegistry.v1.quay.redhat.com
+  name: quay-operatorgroup
+  namespace: quay
+spec:

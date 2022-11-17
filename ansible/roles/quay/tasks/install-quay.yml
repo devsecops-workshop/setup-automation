@@ -11,6 +11,12 @@
         name: quay
       spec:
 
+- name: Create Quay OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+
 - name: Install Quay Operator Subscription
   kubernetes.core.k8s:
     state: present
@@ -57,6 +63,20 @@
             max:
               cpu: '4'
               memory: 12Gi
+
+- name: "Wait for ODF Storagesystem to be ready"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: "odf.openshift.io/v1alpha1"
+    kind: StorageSystem
+    name: ocs-storagecluster-storagesystem
+    wait: true
+    wait_condition:
+      reason: Reconciling
+      status: 'True'
+      type: Progressing
+    wait_sleep: 10
+    wait_timeout: 360
 
 - name: Install Quay Instance
   kubernetes.core.k8s:
