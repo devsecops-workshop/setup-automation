@@ -8,7 +8,7 @@
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-instance/storagecluster.yml') }}"
 
-- name: "Wait for OCS Cluster to deploy"
+- name: "Wait for OCS Cluster to be deployed"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig }}"
     api_version: "ocs.openshift.io/v1"
@@ -20,4 +20,4 @@
       status: 'True'
       type: Available
     wait_sleep: 10
-    wait_timeout: 360
+    wait_timeout: 180

@@ -76,7 +76,7 @@
       status: 'True'
       type: Progressing
     wait_sleep: 10
-    wait_timeout: 360
+    wait_timeout: 180
 
 - name: Install Quay Instance
   kubernetes.core.k8s:
