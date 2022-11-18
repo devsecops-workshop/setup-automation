@@ -1,5 +1,16 @@
 ---
 
+- name: Create ACM Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: project.openshift.io/v1
+      kind: Project
+      metadata:
+        name: open-cluster-management
+      spec:
+
 - name: Install ACM Operator Subscription
   kubernetes.core.k8s:
     state: present
@@ -16,6 +27,10 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
+
+- name: Wait for ACM API to become available
+  ansible.builtin.pause:
+    minutes: 5  
 
 - name: Check if ACM CRD is available
   command: oc get crd multiclusterhubs.operator.open-cluster-management.io 
