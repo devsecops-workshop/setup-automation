@@ -6,3 +6,5 @@
   - import_role:
       name: prepare-host
       tasks_from: prepare-host.yml
+  tags:
+    - prepare
