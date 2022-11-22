@@ -1,0 +1,23 @@
+- name: "Create Storage System"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'storage-instance/storagesystem.yml') }}"
+
+- name: "Create Storage Cluster"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'storage-instance/storagecluster.yml') }}"
+
+- name: "Wait for OCS Cluster to be deployed"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: "ocs.openshift.io/v1"
+    kind: StorageCluster
+    name: ocs-storagecluster
+    wait: true
+    wait_condition:
+      reason: ReconcileCompleted
+      status: 'True'
+      type: Available
+    wait_sleep: 10
+    wait_timeout: 180

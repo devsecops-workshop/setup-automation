@@ -18,7 +18,7 @@
         installPlanApproval: Automatic
 
 - name: Check if DevSpaces CRD is available
-  command: oc get crd devworkspaceoperatorconfigs.controller.devfile.io  
+  command: oc get crd checlusters.org.eclipse.che 
   register: crd_status
   retries: 20
   delay: 5
@@ -35,7 +35,11 @@
         name: openshift-workspaces
       spec:
 
-- name: Install MultiClusterHub Instance
+- name: Wait for DevSpaces API to become available
+  ansible.builtin.pause:
+    minutes: 1      
+
+- name: Install Devspaces Instance
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"

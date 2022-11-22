@@ -5,4 +5,4 @@
   tasks:
   - import_role:
       name: odf
-      tasks_from: install-odf.yml
+      tasks_from: install-odf-operator.yml
