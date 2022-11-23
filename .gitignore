@@ -1,3 +1,4 @@
 inventory/custom_hosts.ini
 context/
 ansible-navigator.v1
+ansible-navigator.log
