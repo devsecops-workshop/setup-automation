@@ -1,0 +1,13 @@
+apiVersion: gpte.opentlc.com/v1
+kind: Gitea
+metadata:
+  name: "{{ gitea_name }}"
+  namespace: "{{ gitea_namespace }}"
+spec:
+  giteaImageTag: "{{ gitea_image_tag }}"
+  giteaSsl: "{{ gitea_ssl}}"
+  giteaVolumeSize: "{{ gitea_volumesize }}"
+  postgresqlVolumeSize: "{{ gitea_pvolumesize }}"
+  giteaAdminUser: "{{ gitea_admin_user }}"
+  giteaAdminPassword: "{{ gitea_admin_password }}"
+  giteaAdminEmail: "{{ gitea_admin_email }}"

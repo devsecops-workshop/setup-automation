@@ -4,49 +4,59 @@
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
-    definition:
-      apiVersion: operators.coreos.com/v1alpha1
-      kind: Subscription
-      metadata:
-        name: devspaces
-        namespace: openshift-operators
-      spec:
-        channel: stable
-        name: devspaces
-        source: redhat-operators
-        sourceNamespace: openshift-marketplace
-        installPlanApproval: Automatic
+    definition: "{{ lookup('file', 'operator-subscription.yml' ) | from_yaml }}"
+  tags: devspaces
 
 - name: Check if DevSpaces CRD is available
-  command: oc get crd checlusters.org.eclipse.che 
-  register: crd_status
-  retries: 20
-  delay: 5
-  until: crd_status.rc == 0
+  kubernetes.core.k8s_info:
+    kind: CustomResourceDefinition
+    name: checlusters.org.eclipse.che 
+  register: che_crd
+  retries: 10
+  delay: 10
+  until: che_crd.resources | list | length == 1
+  tags: devspaces
 
 - name: Create openshift-workspaces Namespace
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
-    definition:
-      apiVersion: project.openshift.io/v1
-      kind: Project
-      metadata:
-        name: openshift-workspaces
-      spec:
+    definition: "{{ lookup('file', 'namespace.yml' ) | from_yaml }}"
+  tags: devspaces
 
-- name: Wait for DevSpaces API to become available
-  ansible.builtin.pause:
-    minutes: 1      
+- name: "Get Installed CSV"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: operators.coreos.com/v1alpha1
+    kind: Subscription
+    name: "devspaces"
+    namespace: "openshift-marketplace"
+  register: r_subscription
+  retries: 30
+  delay: 5
+  until:
+    - r_subscription.resources[0].status.currentCSV is defined
+    - r_subscription.resources[0].status.currentCSV | length > 0
+  tags: devspaces 
+
+- name: "Wait until CSV is installed"
+  kubernetes.core.k8s_info:
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    name: "{{ r_subscription.resources[0].status.currentCSV }}"
+    namespace: "openshift-marketplace"
+  register: r_csv
+  retries: 30
+  delay: 30
+  until:
+    - r_csv.resources[0].status.phase is defined
+    - r_csv.resources[0].status.phase | length > 0
+    - r_csv.resources[0].status.phase == "Succeeded"   
+  tags: devspaces   
 
 - name: Install Devspaces Instance
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
-    definition:
-      apiVersion: org.eclipse.che/v2
-      kind: CheCluster
-      metadata:
-        name: devspaces
-        namespace: openshift-workspaces
-      spec:        
+    definition: "{{ lookup('file', 'devspaces-instance.yml' ) | from_yaml }}"   
+  tags: devspaces    
