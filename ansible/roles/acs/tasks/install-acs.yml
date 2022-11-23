@@ -11,6 +11,12 @@
         name: rhacs-operator
       spec:
 
+- name: Create ACS OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+
 - name: Install ACS Operator Subscription
   kubernetes.core.k8s:
     state: present

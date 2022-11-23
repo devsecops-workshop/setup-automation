@@ -2,17 +2,64 @@
 
 Ansible automation to install parts of the workshop components
 
-## pre
+## In case of Red Hat Enterprise Linux 8
 
-- sudo pip3 install openshift pyyaml kubernetes
-- sudo ansible-galaxy collection install community.kubernetes
+Subscribe your RHEL host:
+```
+subscription-manager register
 
-## Usage
+# get pool id via:
+# subscription-manager list --available
+subscription-manager attach [--auto] --pool=...
 
-- Make sure you have Ansible installed
-- If you want to execute on other hosts than localhost such as a Bastion/Jumphost, copy inventory/custom_hosts.ini.template to inventory/custom_hosts.ini and enter hostname and SSH credentials if required
-- Run the playbook e.g. `ansible-playbook setup.yml` (localhost) or `ansible-playbook setup.yml -i inventory/custom_hosts.ini` (for your custom hosts)
+subscription-manager repos --disable=*
 
-## Sifas Notes
+subscription-manager repos \
+    --enable=rhel-8-for-x86_64-baseos-rpms \
+    --enable=rhel-8-for-x86_64-appstream-rpms \
+    --enable=rhel-8-for-x86_64-highavailability-rpms \
+    --enable=ansible-automation-platform-2.1-for-rhel-8-x86_64-rpms
 
-oc get nodes | grep -v master | awk '{ print $1 }' | grep -v NAME
+
+yum install -y ansible-navigator git podman
+
+```
+
+## In case of Centos 8
+
+Ansible navigator installation based on the upstream [documentation](https://ansible-navigator.readthedocs.io/en/latest/installation/#install-ansible-navigator).
+
+```bash
+dnf install -y python3-pip podman git
+python3 -m pip install ansible-navigator --user
+echo 'export PATH=$HOME/.local/bin:$PATH' >> ~/.profile
+source ~/.profile
+
+```
+
+## Initialize tools
+
+You are now ready to clone this project to your CentOS or RHEL system.
+
+```
+git clone https://github.com/devsecops-workshop/setup-automation.git
+```
+
+## Setup DevSecops-Workshop components
+
+```
+cd setup-automation
+ansible-navigator run -m stdout ansible/setup.yml
+```
+
+# Build / Development
+
+## Build ansible execution enviorment
+
+```bash
+ansible-builder build \
+    --container-runtime podman \
+    --tag quay.io/sifa/devsecops-workshop:devel
+
+podman push quay.io/sifa/devsecops-workshop:devel
+```

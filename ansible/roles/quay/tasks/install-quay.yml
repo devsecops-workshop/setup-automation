@@ -64,19 +64,18 @@
               cpu: '4'
               memory: 12Gi
 
-- name: "Wait for ODF Storagesystem to be ready"
+- name: "Wait for Nooba StrorageClass to be present"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig }}"
-    api_version: "odf.openshift.io/v1alpha1"
-    kind: StorageSystem
-    name: ocs-storagecluster-storagesystem
-    wait: true
-    wait_condition:
-      reason: Reconciling
-      status: 'True'
-      type: Progressing
-    wait_sleep: 10
-    wait_timeout: 180
+    api_version: "storage.k8s.io/v1"
+    kind: StorageClass
+    name: openshift-storage.noobaa.io
+  register: nooba_storageclass
+  retries: 30
+  delay: 10
+  until: nooba_storageclass.resources | list | length == 1
+  tags:
+    - quay
 
 - name: Install Quay Instance
   kubernetes.core.k8s:
