@@ -1,4 +1,4 @@
-libvirt-python
 kubernetes
 pyyaml
 openshift
+jmespath
