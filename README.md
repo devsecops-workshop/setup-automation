@@ -56,10 +56,29 @@ ansible-navigator run -m stdout ansible/setup.yml
 
 ## Build ansible execution enviorment
 
+### With podman
+
 ```bash
 ansible-builder build \
     --container-runtime podman \
-    --tag quay.io/sifa/devsecops-workshop:devel
+    --tag quay.io/<username>/<image-name>:<tag>
 
-podman push quay.io/sifa/devsecops-workshop:devel
+podman push quay.io/<username>/<image-name>:<tag>
 ```
+
+### With docker
+
+```bash
+$ ansible-builder build \
+    --container-runtime podman \
+    --tag quay.io/<username>/<image-name>:<tag>
+$ docker login
+$ docker run <image-name>
+$ docker ps -l
+CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS                      PORTS     NAMES
+a700cc3d5104   dev-sec-ops-workshop-ee   "entrypoint ansible-…"   20 minutes ago   Exited (1) 20 minutes ago             affectionate_margulis
+$ docker commit a700cc3d5104 quay.io/<username>/<image-name>:<tag>
+$ docker push quay.io/<username>/<image-name>:<tag>
+```
+
+Make sure, that in the commit your username is the same as on quay.io and the image-name the one of the repo you want to push to.
