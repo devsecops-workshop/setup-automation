@@ -1,0 +1,4 @@
+# Variables not meant to be overwritten
+---
+gitea_ssl: true
+...
