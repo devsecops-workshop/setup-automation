@@ -1,5 +1,5 @@
 ---
-- hosts: rhpdsclusters
+- hosts: localhost
   tags: gitops
   vars_files:
   - ../vars.yml

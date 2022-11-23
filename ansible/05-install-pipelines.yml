@@ -1,5 +1,5 @@
 ---
-- hosts: rhpdsclusters
+- hosts: localhost
   tags: pipelines
   vars_files:
   - ../vars.yml
