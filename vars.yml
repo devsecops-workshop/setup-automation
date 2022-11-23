@@ -1,2 +1,3 @@
 ---
-k8s_kubeconfig: "/home/lab-user/.kube/config"
+k8s_kubeconfig: "/tmp/kubeconfig"
+remote_kubeconfig_path: "/home/lab-user/.kube/config"

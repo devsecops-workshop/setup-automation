@@ -1,39 +1,7 @@
 ---
-- name: Install Ansible
-  become: true
-  ansible.builtin.dnf:
-    name: "{{ item }}"
-    state: latest
-  loop: "{{ dnf_packages }}"
-  tags:
-    - prepare
-
-- name: Check for installed dependencies
-  become: true
-  pip:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ python_packages }}"
-  tags:
-    - prepare
-
-- name: Check if ansible.community.general is installed
-  ansible.builtin.command: ansible-galaxy collection list
-  register: ansible_installed_collections
-  changed_when: false
-  tags:
-    - prepare
-
-- name: Install collection community.ansible_galaxy_install
-  command: ansible-galaxy collection install community.general
-  when: ansible_installed_collections.stdout.find('community.general') == -1
-  tags:
-    - prepare
-
-- name: Install collection community.kubernetes 
-  community.general.ansible_galaxy_install:
-    type: collection
-    name: "{{ ansible_collections }}"
-  tags:
-    - prepare
+- name: Copy kubeconfig
+  fetch: 
+    src: "{{ remote_kubeconfig_path }}"
+    dest: "{{ k8s_kubeconfig }}"
+  tags: prepare
 ...
