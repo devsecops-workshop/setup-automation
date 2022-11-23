@@ -1,5 +1,6 @@
 ---
 - hosts: rhpdsclusters
+  tags: odf
   vars_files:
   - ../vars.yml
   tasks:

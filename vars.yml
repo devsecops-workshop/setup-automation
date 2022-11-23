@@ -1,11 +1,2 @@
 ---
 k8s_kubeconfig: "/home/lab-user/.kube/config"
-install_gitea: true
-install_odf: true
-install_devspaces: true
-install_quay: true
-install_quay_bridge: true
-install_pipelines: true
-install_gitops: true
-install_acs: true
-install_acm: true

@@ -2,11 +2,13 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-instance/storagesystem.yml') }}"
+  tags: odf
 
 - name: "Create Storage Cluster"
   kubernetes.core.k8s:
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'storage-instance/storagecluster.yml') }}"
+  tags: odf
 
 - name: "Wait for OCS Cluster to be deployed"
   kubernetes.core.k8s_info:
@@ -20,4 +22,5 @@
       status: 'True'
       type: Available
     wait_sleep: 10
-    wait_timeout: 180
+    wait_timeout: 20
+  tags: odf
