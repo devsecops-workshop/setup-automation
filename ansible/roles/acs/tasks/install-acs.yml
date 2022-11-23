@@ -1,5 +1,22 @@
 ---
 
+- name: Create stackrox Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: project.openshift.io/v1
+      kind: Project
+      metadata:
+        name: rhacs-operator
+      spec:
+
+- name: Create ACS OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+
 - name: Install ACS Operator Subscription
   kubernetes.core.k8s:
     state: present
@@ -16,6 +33,11 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
+        startingCSV: rhacs-operator.v3.72.1
+
+- name: Wait for ACS API to become available
+  ansible.builtin.pause:
+    minutes: 1          
 
 - name: Check if ACS CRD is available
   command: oc get crd securedclusters.platform.stackrox.io 

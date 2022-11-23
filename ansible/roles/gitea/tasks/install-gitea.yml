@@ -8,8 +8,10 @@
       apiVersion: project.openshift.io/v1
       kind: Project
       metadata:
-        name: git
+        name: "{{ gitea_namespace }}"
       spec: 
+  tags:
+    - gitea
 
 - name: Install Gitea Operator
   kubernetes.core.k8s:
@@ -26,6 +28,8 @@
         image: quay.io/gpte-devops-automation/gitea-catalog:latest
         displayName: Red Hat GPTE (Gitea)
         publisher: Red Hat GPTE
+  tags:
+    - gitea
 
 - name: Install Gitea Operator Subscription
   kubernetes.core.k8s:
@@ -43,15 +47,22 @@
         source: redhat-gpte-gitea
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
+  tags:
+    - gitea
 
-- name: Check if Gitea CRD is available
-  command: oc get crd giteas.gpte.opentlc.com 
-  register: crd_status
-  retries: 20
-  delay: 5
-  until: crd_status.rc == 0
+- name: Wait for gitea CRD to be available
+  kubernetes.core.k8s_info:
+    kind: CustomResourceDefinition
+    name: giteas.gpte.opentlc.com
+  register: gitea_crd
+  retries: 10
+  delay: 10
+  until: gitea_crd.resources | list | length == 1
+  tags:
+    - gitea
 
 - name: Install Gitea Instance
+  register: result
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
@@ -59,13 +70,69 @@
       apiVersion: gpte.opentlc.com/v1
       kind: Gitea
       metadata:
-        name: repository
-        namespace: git
+        name: "{{ gitea_name }}"
+        namespace: "{{ gitea_namespace }}"
       spec:
-        giteaImageTag: latest
-        giteaSsl: true
-        giteaVolumeSize: 4Gi
-        postgresqlVolumeSize: 4Gi
-        giteaAdminUser: gitea
-        giteaAdminPassword: "gitea"
-        giteaAdminEmail: opentlc-mgr@redhat.com
+        giteaImageTag: "{{ gitea_image_tag }}"
+        giteaSsl: "{{ gitea_ssl}}"
+        giteaVolumeSize: "{{ gitea_volumesize }}"
+        postgresqlVolumeSize: "{{ gitea_pvolumesize }}"
+        giteaAdminUser: "{{ gitea_admin_user }}"
+        giteaAdminPassword: "{{ gitea_admin_password }}"
+        giteaAdminEmail: "{{ gitea_admin_email }}"
+  tags:
+    - gitea
+
+- name: Get route for gitea instance
+  kubernetes.core.k8s_info:
+    kind: Route
+    namespace: "{{ gitea_namespace }}"
+  register: gitea_instance_route
+  changed_when: false
+  retries: 15
+  delay: 10
+  until: gitea_instance_route.resources | list | length == 1
+  tags:
+    - gitea
+    - gitea_repo
+
+- name: Create variable with gitea route
+  set_fact:
+    gitea_url: "https://{{ gitea_instance_route.resources[0].spec.host }}/api/v1"
+  tags:
+    - gitea
+    - gitea_repo
+
+
+- name: Check if repository is already available
+  ansible.builtin.uri:
+    url: "{{ gitea_url }}/repos/{{ gitea_admin_user }}/{{ gitea_dest_repo }}"
+    method: GET
+    user: "{{ gitea_admin_user }}"
+    password: "{{ gitea_admin_password }}"
+    force_basic_auth: yes
+  register: gitea_repo_exists
+  changed_when: false
+  retries: 15
+  delay: 10
+  until: gitea_repo_exists.status != 503
+  failed_when: gitea_repo_exists.status != 200 and gitea_repo_exists.status != 404
+  tags:
+    - gitea
+    - gitea_repo
+
+- name: Create example repository for the workshop
+  ansible.builtin.uri:
+    url: "{{ gitea_url }}/repos/migrate"
+    method: POST
+    user: "{{ gitea_admin_user }}"
+    password: "{{ gitea_admin_password }}"
+    force_basic_auth: yes
+    body_format: json
+    body: "{{ lookup('ansible.builtin.template', 'payload_repository.json.j2') }}"
+    status_code: 201
+  when: gitea_repo_exists.status == 404
+  tags:
+    - gitea
+    - gitea_repo
+...
