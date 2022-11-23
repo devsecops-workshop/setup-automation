@@ -1,0 +1,12 @@
+---
+version: 1
+build_arg_defaults:
+  ANSIBLE_GALAXY_CLI_COLLECTION_OPTS: '-v'
+dependencies:
+  galaxy: ee-requirements.yml
+  python: ee-python-requirements.txt
+  system: ee-bindep.txt
+additional_build_steps:
+  prepend: |
+    RUN pip3 install --upgrade pip setuptools
+...
