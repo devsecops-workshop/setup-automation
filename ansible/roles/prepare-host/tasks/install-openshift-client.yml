@@ -4,18 +4,15 @@
     dest: /tmp/oc-4.10.42-linux.tar.gz
     mode: a+x
   tags: prepare
-  delegate_to: localhost
 
 - name: Unarchive OpenShift Client
   unarchive:
     src: /tmp/oc-4.10.42-linux.tar.gz
     dest: /usr/local/bin
   tags: prepare
-  delegate_to: localhost
 
 - name: Make OpenShift Client executeable
   file:
     src: /usr/local/bin/oc
     mode: a+x  
   tags: prepare
-  delegate_to: localhost
