@@ -3,4 +3,5 @@
   fetch: 
     src: "{{ remote_kubeconfig_path }}"
     dest: "{{ k8s_kubeconfig }}"
+    flat: true
   tags: prepare
