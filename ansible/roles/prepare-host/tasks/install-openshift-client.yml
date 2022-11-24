@@ -2,8 +2,6 @@
   copy: 
     src: oc-4.10.42-linux.tar.gz
     dest: /tmp/oc-4.10.42-linux.tar.gz
-    owner: "runner"
-    group: "runner"
     mode: '0777'
   tags: prepare
   become: true
@@ -19,8 +17,6 @@
   copy:
     src: /tmp/oc
     dest: /usr/local/bin/oc
-    owner: "runner"
-    group: "runner"
     mode: '0777'
   tags: prepare
   become: true
