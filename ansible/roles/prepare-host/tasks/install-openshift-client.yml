@@ -2,14 +2,13 @@
 - name: Unarchive OpenShift Client
   unarchive:
     src: oc-4.10.42-linux.tar.gz
-    dest: "/home/{{ ansible_user }}"
-    group: "ansible_users"
+    dest: "/tmp"
     mode: 0770
   tags: prepare
 
 - name: Copy OpenShift Client and make it executeable
   copy:
-    src: "/home/{{ ansible_user }}/oc"
+    src: "/tmp/oc"
     dest: /usr/local/bin/oc
     mode: 0777
   tags: prepare
