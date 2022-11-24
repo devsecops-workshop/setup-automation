@@ -6,13 +6,16 @@
     group: "runner"
     mode: '0777'
   tags: prepare
+  become: true
+  become_user: runner
 
 - name: Unarchive OpenShift Client
-  become: true
   unarchive:
     src: /tmp/oc-4.10.42-linux.tar.gz
     dest: /tmp
   tags: prepare
+  become: true
+  become_user: runner
 
 - name: Copy OpenShift Client and make it executeable
   copy:
@@ -22,3 +25,5 @@
     group: "runner"
     mode: '0777'
   tags: prepare
+  become: true
+  become_user: runner
