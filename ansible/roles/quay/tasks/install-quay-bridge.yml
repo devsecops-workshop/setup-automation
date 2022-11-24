@@ -45,6 +45,7 @@
     kubeconfig: "{{ k8s_kubeconfig }}"
     kind: Route
     namespace: "quay"
+    name: "quay-quay"
   register: quay_instance_route
   changed_when: false
   retries: 15
