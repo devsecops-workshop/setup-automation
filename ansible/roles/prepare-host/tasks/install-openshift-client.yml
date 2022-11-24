@@ -2,7 +2,7 @@
   copy: 
     src: oc-4.10.42-linux.tar.gz
     dest: /tmp/oc-4.10.42-linux.tar.gz
-    mode: a+x
+    mode: '0777'
   tags: prepare
 
 - name: Unarchive OpenShift Client
