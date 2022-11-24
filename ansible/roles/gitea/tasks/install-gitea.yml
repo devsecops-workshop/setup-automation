@@ -26,6 +26,7 @@
 
 - name: Wait for gitea CRD to be available
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
     kind: CustomResourceDefinition
     name: giteas.gpte.opentlc.com
   register: gitea_crd
@@ -46,6 +47,7 @@
 
 - name: Get route for gitea instance
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
     kind: Route
     namespace: "{{ gitea_namespace }}"
   register: gitea_instance_route

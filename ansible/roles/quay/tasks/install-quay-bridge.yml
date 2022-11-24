@@ -25,6 +25,7 @@
 
 - name: "Wait until CSV is installed"
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
     api_version: operators.coreos.com/v1alpha1
     kind: ClusterServiceVersion
     name: "{{ r_subscription.resources[0].status.currentCSV }}"
@@ -41,6 +42,7 @@
 
 - name: Get route for Quay instance
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
     kind: Route
     namespace: "quay"
   register: quay_instance_route
