@@ -1,6 +1,6 @@
 ---
 - name: Get debug information 
-  shell: "whoami"
+  shell: "hostname -f"
   register: result
 
 - name: Print return information from the previous task
