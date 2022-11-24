@@ -8,12 +8,13 @@
 - name: Unarchive OpenShift Client
   unarchive:
     src: /tmp/oc-4.10.42-linux.tar.gz
-    dest: /usr/local/bin
+    dest: /tmp
   tags: prepare
 
-- name: Make OpenShift Client executeable
-  file:
-    path: /usr/local/bin/oc
+- name: Copy OpenShift Client and make it executeable
+  copy:
+    src: /tmp/oc
+    dest: /usr/local/bin/oc
     owner: "runner"
     group: "runner"
     mode: '0777'
