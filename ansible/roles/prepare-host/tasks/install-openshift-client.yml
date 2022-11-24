@@ -7,7 +7,6 @@
     mode: '0777'
   tags: prepare
   become: true
-  become_user: runner
 
 - name: Unarchive OpenShift Client
   unarchive:
@@ -15,7 +14,6 @@
     dest: /tmp
   tags: prepare
   become: true
-  become_user: runner
 
 - name: Copy OpenShift Client and make it executeable
   copy:
@@ -26,4 +24,3 @@
     mode: '0777'
   tags: prepare
   become: true
-  become_user: runner
