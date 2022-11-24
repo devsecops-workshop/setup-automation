@@ -9,6 +9,6 @@
   - import_role:
       name: prepare-host
       tasks_from: install-openshift-client.yml
-      delegate_to: localhost
+    delegate_to: localhost
   tags:
     - prepare
