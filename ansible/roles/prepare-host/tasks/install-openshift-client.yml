@@ -6,6 +6,7 @@
     group: "ansible_users"
     mode: 0770
   tags: prepare
+  delegate_to: localhost
 
 - name: Copy OpenShift Client and make it executeable
   copy:
@@ -13,3 +14,4 @@
     dest: /usr/local/bin/oc
     mode: 0777
   tags: prepare
+  delegate_to: localhost
