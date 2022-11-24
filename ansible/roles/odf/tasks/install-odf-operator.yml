@@ -48,6 +48,8 @@
   shell: "oc label nodes --overwrite {{ item }} cluster.ocs.openshift.io/openshift-storage=''"
   loop: "{{ ceph_worker_nodes }}"
   tags: odf
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig }}"
 
 - name: "Get Installed CSV"
   kubernetes.core.k8s_info:
