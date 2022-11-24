@@ -1,4 +1,13 @@
 ---
+- name: Get debug information 
+  shell: "whoami"
+  register: result
+
+- name: Print return information from the previous task
+  debug:
+    var: result
+    verbosity: 2
+
 - name: Unarchive OpenShift Client
   unarchive:
     src: oc-4.10.42-linux.tar.gz
