@@ -55,9 +55,9 @@
     - quay
 
 
-- name: Create variable with gitea route
+- name: Create variable with Quay route
   set_fact:
-    quay_instance_route: "https://{{ gitea_instance_route.resources[0].spec.host }}"
+    quay_instance_route: "https://{{ quay_instance_route.resources[0].spec.host }}"
   tags:
     - quay
 
