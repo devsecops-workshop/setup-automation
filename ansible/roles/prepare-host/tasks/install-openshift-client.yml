@@ -1,21 +1,21 @@
 - name: Copy OpenShift client
   copy: 
     src: oc-4.10.42-linux.tar.gz
-    dest: /tmp/oc-4.10.42-linux.tar.gz
+    dest: /home/runner/oc-4.10.42-linux.tar.gz
     mode: '0777'
   tags: prepare
   become: true
 
 - name: Unarchive OpenShift Client
   unarchive:
-    src: /tmp/oc-4.10.42-linux.tar.gz
-    dest: /tmp
+    src: /home/runner/oc-4.10.42-linux.tar.gz
+    dest: /home/runner
   tags: prepare
   become: true
 
 - name: Copy OpenShift Client and make it executeable
   copy:
-    src: /tmp/oc
+    src: /home/runner/
     dest: /usr/local/bin/oc
     mode: '0777'
   tags: prepare
