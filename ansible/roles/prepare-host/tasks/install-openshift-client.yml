@@ -13,6 +13,6 @@
 
 - name: Make OpenShift Client executeable
   file:
-    src: /usr/local/bin/oc
+    path: /usr/local/bin/oc
     mode: a+x  
   tags: prepare
