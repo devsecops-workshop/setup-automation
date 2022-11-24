@@ -30,7 +30,7 @@
     api_version: operators.coreos.com/v1alpha1
     kind: Subscription
     name: "devspaces"
-    namespace: "openshift-marketplace"
+    namespace: "openshift-operators"
   register: r_subscription
   retries: 30
   delay: 5
