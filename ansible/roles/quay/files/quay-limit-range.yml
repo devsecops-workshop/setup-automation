@@ -1,0 +1,21 @@
+kind: LimitRange
+apiVersion: v1
+metadata:
+  name: quay-core-resource-limits
+  namespace: quay
+spec:
+  limits:
+    - type: Container
+      max:
+        cpu: '4'
+        memory: 6Gi
+      default:
+        cpu: 500m
+        memory: 1536Mi
+      defaultRequest:
+        cpu: 50m
+        memory: 256Mi
+    - type: Pod
+      max:
+        cpu: '4'
+        memory: 12Gi

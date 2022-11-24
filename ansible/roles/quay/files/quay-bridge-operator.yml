@@ -1,0 +1,14 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/quay-bridge-operator.openshift-operators: ''
+  name: quay-bridge-operator
+  namespace: quay
+spec:
+  channel: stable-3.7
+  installPlanApproval: Automatic
+  name: quay-bridge-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: quay-bridge-operator.v3.7.10
