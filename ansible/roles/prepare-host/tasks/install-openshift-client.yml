@@ -1,6 +1,6 @@
 ---
 - name: Get debug information 
-  shell: "hostname -f"
+  shell: "cat /etc/hostname"
   register: result
 
 - name: Print return information from the previous task
