@@ -70,14 +70,9 @@ podman push quay.io/<username>/<image-name>:<tag>
 
 ```bash
 $ ansible-builder build \
-    --container-runtime podman \
+    --container-runtime docker \
     --tag quay.io/<username>/<image-name>:<tag>
 $ docker login
-$ docker run <image-name>
-$ docker ps -l
-CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS                      PORTS     NAMES
-a700cc3d5104   dev-sec-ops-workshop-ee   "entrypoint ansible-…"   20 minutes ago   Exited (1) 20 minutes ago             affectionate_margulis
-$ docker commit a700cc3d5104 quay.io/<username>/<image-name>:<tag>
 $ docker push quay.io/<username>/<image-name>:<tag>
 ```
 
