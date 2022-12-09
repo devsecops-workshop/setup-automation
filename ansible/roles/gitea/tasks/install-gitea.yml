@@ -74,6 +74,7 @@
     user: "{{ gitea_admin_user }}"
     password: "{{ gitea_admin_password }}"
     force_basic_auth: yes
+    validate_certs: false
   register: gitea_repo_exists
   changed_when: false
   retries: 15
@@ -94,6 +95,7 @@
     body_format: json
     body: "{{ lookup('ansible.builtin.template', 'payload_repository.json.j2') }}"
     status_code: 201
+    validate_certs: false
   when: gitea_repo_exists.status == 404
   tags:
     - gitea
