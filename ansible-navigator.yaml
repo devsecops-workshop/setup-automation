@@ -1,8 +1,6 @@
 ---
 ansible-navigator:
   execution-environment:
-    container-options:
-    - --net=host
     image: quay.io/sifa/devsecops-workshop:devel
   logging:
     level: critical

@@ -6,12 +6,3 @@
   - import_role:
       name: prepare-host
       tasks_from: prepare-host.yml
-
-- hosts: localhost
-  connection: local
-  tasks:
-  - import_role:
-      name: prepare-host
-      tasks_from: install-openshift-client.yml
-  tags:
-    - prepare

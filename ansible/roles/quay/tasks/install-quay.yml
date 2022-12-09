@@ -1,10 +1,12 @@
 ---
 
-- name: Create quay Namespace
+- name: Create Quay Namespace
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'quay-namespace.yml' ) | from_yaml }}"
+  tags:
+    - quay
 
 
 - name: Create Quay OperatorGroup
