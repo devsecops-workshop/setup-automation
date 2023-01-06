@@ -30,7 +30,7 @@
 
 - name: Wait for ACM API to become available
   ansible.builtin.pause:
-    minutes: 5  
+    minutes: 1  
 
 - name: Check if ACM CRD is available
   command: oc get crd multiclusterhubs.operator.open-cluster-management.io 
@@ -38,17 +38,6 @@
   retries: 20
   delay: 5
   until: crd_status.rc == 0
-
-- name: Create open-cluster-management Namespace
-  kubernetes.core.k8s:
-    state: present
-    kubeconfig: "{{ k8s_kubeconfig }}"
-    definition:
-      apiVersion: project.openshift.io/v1
-      kind: Project
-      metadata:
-        name: open-cluster-management
-      spec:  
 
 - name: Install MultiClusterHub Instance
   kubernetes.core.k8s:

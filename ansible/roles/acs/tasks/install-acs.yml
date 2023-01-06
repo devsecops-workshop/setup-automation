@@ -33,7 +33,6 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
-        startingCSV: rhacs-operator.v3.72.1
 
 - name: Wait for ACS API to become available
   ansible.builtin.pause:
