@@ -30,7 +30,7 @@
     kind: CustomResourceDefinition
     name: giteas.gpte.opentlc.com
   register: gitea_crd
-  retries: 10
+  retries: 30
   delay: 10
   until: gitea_crd.resources | list | length == 1
   tags:
@@ -52,16 +52,20 @@
     namespace: "{{ gitea_namespace }}"
   register: gitea_instance_route
   changed_when: false
-  retries: 15
+  retries: 35
   delay: 10
   until: gitea_instance_route.resources | list | length == 1
   tags:
     - gitea
     - gitea_repo
 
+- name: Check for http protocol
+  set_fact: 
+      http_protocol: "{{ 'http' if gitea_ssl == false else 'https' }}"     
+
 - name: Create variable with gitea route
   set_fact:
-    gitea_url: "https://{{ gitea_instance_route.resources[0].spec.host }}/api/v1"
+    gitea_url: "{{http_protocol}}://{{ gitea_instance_route.resources[0].spec.host }}/api/v1"
   tags:
     - gitea
     - gitea_repo
@@ -77,7 +81,7 @@
     validate_certs: false
   register: gitea_repo_exists
   changed_when: false
-  retries: 15
+  retries: 35
   delay: 10
   until: gitea_repo_exists.status != 503
   failed_when: gitea_repo_exists.status != 200 and gitea_repo_exists.status != 404

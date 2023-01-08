@@ -7,7 +7,7 @@
     - quay
 
 
-- name: "Get Installed CSV"
+- name: "Get Installed Bridge CSV"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig }}"
     api_version: operators.coreos.com/v1alpha1
@@ -23,7 +23,7 @@
   tags:
     - quay
 
-- name: "Wait until CSV is installed"
+- name: "Wait until Bridge CSV is installed"
   kubernetes.core.k8s_info:
     kubeconfig: "{{ k8s_kubeconfig }}"
     api_version: operators.coreos.com/v1alpha1
@@ -39,6 +39,7 @@
     - r_csv.resources[0].status.phase == "Succeeded"
   tags:
     - quay
+  ignore_errors: true  
 
 - name: Get route for Quay instance
   kubernetes.core.k8s_info:

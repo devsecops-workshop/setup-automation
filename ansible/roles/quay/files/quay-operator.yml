@@ -6,9 +6,8 @@ metadata:
   name: quay-operator
   namespace: quay
 spec:
-  channel: stable-3.7
+  channel: stable-3.8
   installPlanApproval: Automatic
   name: quay-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: quay-operator.v3.7.10

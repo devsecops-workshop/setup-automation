@@ -1,10 +1,10 @@
 ---
 
-- name: Create ACM Namespace
+- name: Create open-cluster-management Namespace
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
-    definition: "{{ lookup('file', 'acm-namespace.yml' ) | from_yaml }}"
+    definition: "{{ lookup('file', 'open-cluster-management-namespace.yml' ) | from_yaml }}"
   tags:
     - acm
 
@@ -20,7 +20,7 @@
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
-    definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+    definition: "{{ lookup('file', 'operator-subscription.yml' ) | from_yaml }}"
   tags:
     - acm
 
@@ -54,13 +54,7 @@
     - r_csv.resources[0].status.phase == "Succeeded"
   tags: acm
 
-- name: Create open-cluster-management Namespace
-  kubernetes.core.k8s:
-    state: present
-    kubeconfig: "{{ k8s_kubeconfig }}"
-    definition: "{{ lookup('file', 'open-cluster-management-namespace.yml' ) | from_yaml }}"
-  tags:
-    - acm 
+
 
 - name: Install MultiClusterHub Instance
   kubernetes.core.k8s:

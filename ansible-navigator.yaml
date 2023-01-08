@@ -2,6 +2,8 @@
 ansible-navigator:
   execution-environment:
     image: quay.io/sifa/devsecops-workshop:devel
+    pull:
+      policy: always
   logging:
     level: critical
   mode: stdout

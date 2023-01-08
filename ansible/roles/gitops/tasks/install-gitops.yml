@@ -16,6 +16,8 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
+  tags:
+  - gitops      
 
 - name: Check if Gitops CRD is available
   command: oc get crd argocds.argoproj.io
@@ -23,6 +25,8 @@
   retries: 20
   delay: 5
   until: crd_status.rc == 0
+  tags:
+  - gitops
 
 - name: Create workshop-prod Namespace
   kubernetes.core.k8s:
@@ -34,6 +38,8 @@
       metadata:
         name: workshop-prod
       spec:
+  tags:
+  - gitops
 
 - name: Install Gitops Instance
   kubernetes.core.k8s:
@@ -102,6 +108,8 @@
               memory: 2048Mi
             requests:
               cpu: 250m
-              memory: 1024Mi     
+              memory: 1024Mi
+  tags:
+  - gitops                 
 
 

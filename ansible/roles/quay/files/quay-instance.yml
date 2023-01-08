@@ -25,3 +25,4 @@ spec:
       managed: true
     - kind: clairpostgres
       managed: true
+  configBundleSecret: custom-quay-config    

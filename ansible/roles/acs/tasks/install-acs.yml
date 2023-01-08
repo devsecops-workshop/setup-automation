@@ -10,12 +10,16 @@
       metadata:
         name: rhacs-operator
       spec:
+  tags:
+    - acs
 
 - name: Create ACS OperatorGroup
   kubernetes.core.k8s:
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+  tags:
+    - acs
 
 - name: Install ACS Operator Subscription
   kubernetes.core.k8s:
@@ -33,11 +37,14 @@
         source: redhat-operators
         sourceNamespace: openshift-marketplace
         installPlanApproval: Automatic
-        startingCSV: rhacs-operator.v3.72.1
+  tags:
+    - acs
 
 - name: Wait for ACS API to become available
   ansible.builtin.pause:
-    minutes: 1          
+    minutes: 1
+  tags:
+    - acs
 
 - name: Check if ACS CRD is available
   command: oc get crd securedclusters.platform.stackrox.io 
@@ -45,6 +52,8 @@
   retries: 20
   delay: 5
   until: crd_status.rc == 0
+  tags:
+  - acs
 
 - name: Create stackrox Namespace
   kubernetes.core.k8s:
@@ -56,6 +65,14 @@
       metadata:
         name: stackrox
       spec:
+  tags:
+  - acs
+
+- name: Wait for ACS Operator API to become ready
+  ansible.builtin.pause:
+    minutes: 1
+  tags:
+    - acs   
 
 - name: Install Central Instance
   kubernetes.core.k8s:
@@ -93,5 +110,7 @@
               minReplicas: 2
               replicas: 3
           scannerComponent: Enabled
+  tags:
+  - acs      
      
 

@@ -1,10 +1,33 @@
-# setup-automation
+# DevSecOps Workshop - Automated Setup
 
-Ansible automation to install parts of the workshop components
+Ansible automation to install and configure components of the workshop. For example to test the workshop or skip to certain chapters.
 
-## In case of Red Hat Enterprise Linux 8
+Currently supported component installation:
 
-Subscribe your RHEL host:
+- Gitea (including repos)
+- ODF
+- Quay
+- Quay Bridge
+- DevSpaces
+- OpenShift Pipelines
+- OpenShift GitOps
+- ACS
+- ACM
+
+## Run Options
+
+The current version only supports running the playbooks in an Ansible Executing Environment a.k.a a container.
+
+You can run the environment either on your local machine with access to a bastion host or on the bastion host directly(for example a RHPDS bastion host)
+
+## Install ansible-navigator
+
+The automation needs to be run with the `ansible-navigator` command.
+
+### Installation Red Hat Enterprise Linux 8
+
+You will need a valid Red Hat Subscritpion thenn you can subscribe your RHEL host by
+
 ```
 subscription-manager register
 
@@ -25,7 +48,7 @@ yum install -y ansible-navigator git podman
 
 ```
 
-## In case of Centos 8
+### Installation Centos Stream 8
 
 Ansible navigator installation based on the upstream [documentation](https://ansible-navigator.readthedocs.io/en/latest/installation/#install-ansible-navigator).
 
@@ -37,24 +60,83 @@ source ~/.profile
 
 ```
 
-## Initialize tools
+## Clone and prepare the project
 
-You are now ready to clone this project to your CentOS or RHEL system.
+You are now ready to clone this project to your system (local or bastion).
 
 ```
 git clone https://github.com/devsecops-workshop/setup-automation.git
-```
-
-## Setup DevSecops-Workshop components
-
-```
 cd setup-automation
-ansible-navigator run -m stdout ansible/setup.yml
 ```
 
-# Build / Development
+## Copy the inventory template and customize it
 
-## Build ansible execution enviorment
+```
+cp inventory/custom_hosts.ini.template inventory/custom_hosts.ini
+```
+
+and replace the <SSH JUMPHOST HOSTNAME>, <SSH_USER> and <SSH_PASSWORD>
+
+## Check and adjust the path to kubeconfig on your bastion
+
+The path is defined in `vars.yml` as _remote_kubeconfig_path_.
+
+The default matches the position in a RHPDS bastion, so adjust if required.
+
+## Run the automation
+
+```
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini
+```
+
+### Customize the automation
+
+#### Installed components
+
+By default the script will install all components.
+
+You can choose to skip certain components by applying tags
+
+The following tags are available
+
+- prepare (must always be executed)
+- acm
+- devspaces
+- gitea
+- gitea_repo
+- odf
+- quay
+- acs
+- pipelines
+- gitops
+
+For example this command will skip the DevSpaces and ACM installation
+
+```
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces, acm
+```
+
+#### Other configurations
+
+You can further adjust the installation via environment variables
+
+The following environment variables are available to be overwritten
+
+- gitea_ssl: true
+
+For example to install Gitea without SSL you can use to following command
+
+```
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini -e '{"gitea_ssl":false}'
+```
+
+# Optional : Build you own Execution Environment
+
+In case you need to adjust the environment by adding additional tools you can build you own EE image
+
+## Build Ansible execution with Podman
+
+This will build a local version of the EE image
 
 ```bash
 ansible-builder build \
