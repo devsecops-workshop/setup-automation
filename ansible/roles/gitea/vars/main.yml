@@ -8,6 +8,7 @@ gitea_pvolumesize: 4Gi
 gitea_admin_user: gitea
 gitea_admin_password: gitea
 gitea_admin_email: opentlc-mgr@redhat.com
-gitea_source_repo: https://github.com/devsecops-workshop/quarkus-build-options.git
-gitea_dest_repo: quarkus-build-options
+gitea_repos:
+  - { "clone_addr": "https://github.com/devsecops-workshop/quarkus-build-options.git", "repo_name": "quarkus-build-options" }
+  - { "clone_addr": "https://github.com/devsecops-workshop/openshift-gitops-getting-started.git", "repo_name": "openshift-gitps-getting-started" }
 ...
