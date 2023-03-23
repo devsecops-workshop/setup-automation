@@ -32,10 +32,10 @@
   changed_when: false
   retries: 15
   delay: 10
-  until: gitea_repo_exists.status != 503
+  until: gitea_repo_exists.status != 503 and gitea_repo_exists.status != 401
   failed_when: gitea_repo_exists.status != 200 and gitea_repo_exists.status != 404
-  no_log: true
   loop: "{{ gitea_repos }}"
+  no_log: true
   loop_control:
     label: "{{ item.repo_name }}"
   tags:
