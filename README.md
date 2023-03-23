@@ -26,7 +26,7 @@ The automation needs to be run with the `ansible-navigator` command.
 
 ### Installation Red Hat Enterprise Linux 8
 
-You will need a valid Red Hat Subscritpion thenn you can subscribe your RHEL host by
+You will need a valid Red Hat Subscription, then you can subscribe your RHEL host by
 
 ```
 subscription-manager register
@@ -47,6 +47,15 @@ subscription-manager repos \
 yum install -y ansible-navigator git podman
 
 ```
+Note: If using a bastion on RHPDS or RHDP environments you need to unregister from the lab Satellite server and switch to the Red Hat cdn base url:
+
+```
+[root@bastion ~]$ subscription-manager unregister
+[root@bastion ~]$ cp /etc/rhsm/rhsm.conf.kat-backup /etc/rhsm/rhsm.conf
+```
+
+Then proceed as above.
+
 
 ### Installation Centos Stream 8
 
