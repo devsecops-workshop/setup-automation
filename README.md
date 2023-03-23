@@ -88,12 +88,20 @@ cd setup-automation
 
 ## Copy the inventory template and customize it
 
+If running Ansible from a laptop or else:
+
 ```
 cp inventory/custom_hosts.ini.template inventory/custom_hosts.ini
 ```
 
-and replace the <SSH JUMPHOST HOSTNAME>, <SSH_USER> and <SSH_PASSWORD>
+and replace <SSH JUMPHOST HOSTNAME> with the bastion hostname and <SSH_USER> and <SSH_PASSWORD>
 
+If running Ansible on the bastion host, the inventory should look like:
+    
+```
+<internal bastion IP> ansible_user=lab-user ansible_password=<SSH password>
+```
+    
 ## Check and adjust the path to kubeconfig on your bastion
 
 The path is defined in `vars.yml` as _remote_kubeconfig_path_.
