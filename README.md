@@ -54,6 +54,14 @@ Note: If using a bastion on RHPDS or RHDP environments you need to unregister fr
 [root@bastion ~]$ cp /etc/rhsm/rhsm.conf.kat-backup /etc/rhsm/rhsm.conf
 ```
 
+This is the easiest way, if there is no rhsm.conf backup put this in your rhsm.conf:
+
+```
+[rhsm]
+# Content base URL:
+baseurl = https://cdn.redhat.com
+```
+
 Then proceed as above.
 
 
