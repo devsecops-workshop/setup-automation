@@ -1,0 +1,7 @@
+---
+- name: Install Gitea Operator and create an instance
+  include_tasks: gitea_install_operator.yml
+
+- name: Create and mirror repositories
+  include_tasks: gitea_create_repositories.yml
+...

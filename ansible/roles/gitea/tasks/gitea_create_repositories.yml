@@ -1,0 +1,65 @@
+---
+- name: Get route for gitea instance
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    kind: Route
+    namespace: "{{ gitea_namespace }}"
+  register: gitea_instance_route
+  changed_when: false
+  retries: 15
+  delay: 10
+  until: gitea_instance_route.resources | list | length == 1
+  tags:
+    - gitea
+    - gitea_repo
+
+- name: Create variable with gitea route
+  set_fact:
+    gitea_url: "https://{{ gitea_instance_route.resources[0].spec.host }}/api/v1"
+  tags:
+    - gitea
+    - gitea_repo
+
+
+- name: Check if repository is already available
+  ansible.builtin.uri:
+    url: "{{ gitea_url }}/repos/{{ gitea_admin_user }}/{{ item.repo_name }}"
+    method: GET
+    user: "{{ gitea_admin_user }}"
+    password: "{{ gitea_admin_password }}"
+    force_basic_auth: true
+  register: gitea_repo_exists
+  changed_when: false
+  retries: 15
+  delay: 10
+  until: gitea_repo_exists.status != 503 and gitea_repo_exists.status != 401
+  failed_when: gitea_repo_exists.status != 200 and gitea_repo_exists.status != 404
+  loop: "{{ gitea_repos }}"
+  no_log: true
+  loop_control:
+    label: "{{ item.repo_name }}"
+  tags:
+    - gitea
+    - gitea_repo
+
+- name: Create example repository for the workshop
+  ansible.builtin.uri:
+    url: "{{ gitea_url }}/repos/migrate"
+    method: POST
+    user: "{{ gitea_admin_user }}"
+    password: "{{ gitea_admin_password }}"
+    force_basic_auth: true
+    body_format: json
+    body:
+      auth_password: "{{ gitea_admin_password }}"
+      auth_username: "{{ gitea_admin_user }}"
+      clone_addr: "{{ item.item.clone_addr }}"
+      repo_name: "{{ item.item.repo_name }}"
+    status_code: 201
+  when: item.status == 404
+  loop: "{{ gitea_repo_exists.results }}"
+  no_log: true
+  tags:
+    - gitea
+    - gitea_repo
+...

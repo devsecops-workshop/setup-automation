@@ -1,0 +1,46 @@
+---
+- name: Create Gitea Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('template', 'gitea-namespace.yml.j2' ) | from_yaml }}"
+    apply: false
+  tags:
+    - gitea
+
+- name: Install Gitea Operator
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-installation.yml' ) | from_yaml }}"
+  tags:
+    - gitea
+
+- name: Install Gitea Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-subscription.yml' ) | from_yaml }}"
+  tags:
+    - gitea
+
+- name: Wait for gitea CRD to be available
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    kind: CustomResourceDefinition
+    name: giteas.gpte.opentlc.com
+  register: gitea_crd
+  retries: 10
+  delay: 10
+  until: gitea_crd.resources | list | length == 1
+  tags:
+    - gitea
+
+- name: Install Gitea Instance
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('template', 'gitea-instance.yml.j2' ) | from_yaml }}"
+  tags:
+    - gitea
+...
