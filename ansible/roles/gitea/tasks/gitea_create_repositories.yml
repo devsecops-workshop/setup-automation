@@ -13,13 +13,19 @@
     - gitea
     - gitea_repo
 
+- name: Check for http protocol
+  set_fact: 
+      http_protocol: "{{ 'http' if gitea_ssl == false else 'https' }}"
+  tags:
+    - gitea
+    - gitea_repo    
+
 - name: Create variable with gitea route
   set_fact:
-    gitea_url: "https://{{ gitea_instance_route.resources[0].spec.host }}/api/v1"
+    gitea_url: "{{http_protocol}}://{{ gitea_instance_route.resources[0].spec.host }}/api/v1"
   tags:
     - gitea
     - gitea_repo
-
 
 - name: Check if repository is already available
   ansible.builtin.uri:
