@@ -41,7 +41,7 @@
     kind: StorageClass
     name: openshift-storage.noobaa.io
   register: nooba_storageclass
-  retries: 30
+  retries: 60
   delay: 10
   until: nooba_storageclass.resources | list | length == 1
   tags:

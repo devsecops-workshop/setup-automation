@@ -6,14 +6,14 @@ metadata:
 spec:
   manageNodes: false
   storageDeviceSets:
-  - name: ocs-deviceset-gp2
+  - name: ocs-storagecluster
     count: 1
     replica: 3
     resources: {}
     placement: {}
     dataPVCTemplate:
       spec:
-        storageClassName: gp2
+        storageClassName: gp3-csi
         accessModes:
         - ReadWriteOnce
         volumeMode: Block
