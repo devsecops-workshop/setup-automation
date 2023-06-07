@@ -1,0 +1,62 @@
+---
+
+- name: Install DevSpaces Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-subscription.yml' ) | from_yaml }}"
+  tags: devspaces
+
+- name: Check if DevSpaces CRD is available
+  kubernetes.core.k8s_info:
+    kind: CustomResourceDefinition
+    name: checlusters.org.eclipse.che 
+  register: che_crd
+  retries: 10
+  delay: 10
+  until: che_crd.resources | list | length == 1
+  tags: devspaces
+
+- name: Create openshift-workspaces Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'namespace.yml' ) | from_yaml }}"
+  tags: devspaces
+
+- name: "Get Installed CSV"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: operators.coreos.com/v1alpha1
+    kind: Subscription
+    name: "devspaces"
+    namespace: "openshift-operators"
+  register: r_subscription
+  retries: 30
+  delay: 5
+  until:
+    - r_subscription.resources[0].status.currentCSV is defined
+    - r_subscription.resources[0].status.currentCSV | length > 0
+  tags: devspaces 
+
+- name: "Wait until CSV is installed"
+  kubernetes.core.k8s_info:
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    name: "{{ r_subscription.resources[0].status.currentCSV }}"
+    namespace: "openshift-marketplace"
+  register: r_csv
+  retries: 30
+  delay: 30
+  until:
+    - r_csv.resources[0].status.phase is defined
+    - r_csv.resources[0].status.phase | length > 0
+    - r_csv.resources[0].status.phase == "Succeeded"   
+  tags: devspaces   
+
+- name: Install Devspaces Instance
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'devspaces-instance.yml' ) | from_yaml }}"   
+  tags: devspaces    

@@ -1,0 +1,118 @@
+---
+
+- name: Create Quay Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'quay-namespace.yml' ) | from_yaml }}"
+  tags:
+    - quay
+
+
+- name: Create Quay OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+  tags:
+    - quay
+
+- name: Install Quay Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'quay-operator.yml' ) | from_yaml }}"
+  tags:
+    - quay
+
+
+- name: Remove quay LimitRanges 
+  kubernetes.core.k8s:
+    state: absent
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'quay-limit-range.yml' ) | from_yaml }}"
+  tags:
+    - quay
+
+- name: "Wait for Nooba StrorageClass to be present"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: "storage.k8s.io/v1"
+    kind: StorageClass
+    name: openshift-storage.noobaa.io
+  register: nooba_storageclass
+  retries: 60
+  delay: 10
+  until: nooba_storageclass.resources | list | length == 1
+  tags:
+    - quay
+
+- name: Install Quay Custom Config Bundle Secret
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'quay-config-bundle-secret.yml' ) | from_yaml }}"
+  tags:
+    - quay     
+
+- name: Install Quay Instance
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'quay-instance.yml' ) | from_yaml }}"
+  tags:
+    - quay
+
+- name: Get Route for Quay instance
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    kind: Route
+    namespace: quay
+  register: quay_instance_route
+  changed_when: false
+  retries: 35
+  delay: 10
+  until: quay_instance_route.resources | list | length == 3
+  tags:
+    - quay
+
+- name: Create variable with quay route
+  set_fact:
+    quay_url: "https://{{ quay_instance_route.resources[0].spec.host }}/api/v1"
+  tags:
+    - quay
+
+- name: Wait for Quay Instance to become ready
+  ansible.builtin.pause:
+    minutes: 3
+  tags:
+    - quay    
+
+- name: Create quayadmin user
+  ansible.builtin.uri:
+    url: "{{ quay_url }}/user/initialize"
+    method: POST
+    return_content: yes
+    body_format: json
+    body: "{{ lookup('file', 'payload_create_user.json')}}"
+    status_code: 200
+    validate_certs: false
+  register: response
+  tags:
+    - quay
+  ignore_errors: true  
+
+- name: Write Quay OAuth Token to file
+  ansible.builtin.copy:
+    content: "{{ response }}"
+    dest: "quay_token.json" 
+  tags:
+    - quay
+  ignore_errors: true       
+
+- name: Include Quay Bridge Operator
+  include_tasks: "install-quay-bridge.yml"
+  tags:
+    - quay
+
+

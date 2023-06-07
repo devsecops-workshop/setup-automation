@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  tags: webterminal
+  vars_files:
+  - ../vars.yml
+  tasks:
+  - import_role:
+      name: webterminal
+      tasks_from: install-webterminal.yml

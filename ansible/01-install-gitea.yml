@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  gather_facts: false
+  vars_files:
+    - ../vars.yml
+  tags:
+    - gitea
+    - gitea_repo
+  tasks:
+    - ansible.builtin.import_role:
+        name: gitea
+...

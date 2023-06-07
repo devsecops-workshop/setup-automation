@@ -1,0 +1,4 @@
+pkgconf-pkg-config
+gcc
+python38-devel
+jq

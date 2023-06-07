@@ -1,0 +1,11 @@
+# Variables which are not supposed to be overwritten
+---
+dnf_packages:
+  - ansible-core
+python_packages:
+  - openshift
+  - pyyaml
+  - kubernetes
+ansible_collections:
+  - community.kubernetes
+...

@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  tags: acm
+  vars_files:
+  - ../vars.yml
+  tasks:
+  - import_role:
+      name: acm
+      tasks_from: install-acm.yml

@@ -1,0 +1,12 @@
+apiVersion: quay.redhat.com/v1
+kind: QuayIntegration
+metadata:
+  name: quay
+spec:
+  credentialsSecret:
+    name: quay-credentials
+    namespace: quay
+    key: token
+  clusterID: openshift
+  insecureRegistry: true
+  quayHostname: "{{ quay_instance_route }}"

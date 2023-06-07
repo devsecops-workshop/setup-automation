@@ -1,0 +1,116 @@
+---
+
+- name: Create stackrox Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: project.openshift.io/v1
+      kind: Project
+      metadata:
+        name: rhacs-operator
+      spec:
+  tags:
+    - acs
+
+- name: Create ACS OperatorGroup
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-group.yml' ) | from_yaml }}"
+  tags:
+    - acs
+
+- name: Install ACS Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: rhacs-operator
+        namespace: rhacs-operator
+      spec:
+        channel: latest
+        name: rhacs-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+        installPlanApproval: Automatic
+  tags:
+    - acs
+
+- name: Wait for ACS API to become available
+  ansible.builtin.pause:
+    minutes: 1
+  tags:
+    - acs
+
+- name: Check if ACS CRD is available
+  command: oc get crd securedclusters.platform.stackrox.io 
+  register: crd_status
+  retries: 20
+  delay: 5
+  until: crd_status.rc == 0
+  tags:
+  - acs
+
+- name: Create stackrox Namespace
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: project.openshift.io/v1
+      kind: Project
+      metadata:
+        name: stackrox
+      spec:
+  tags:
+  - acs
+
+- name: Wait for ACS Operator API to become ready
+  ansible.builtin.pause:
+    minutes: 1
+  tags:
+    - acs   
+
+- name: Install Central Instance
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition:
+      apiVersion: platform.stackrox.io/v1alpha1
+      kind: Central
+      metadata:
+        name: stackrox-central-services
+        namespace: stackrox
+      spec: 
+        central:
+          resources:
+            limits:
+              memory: 6Gi
+          exposure:
+            loadBalancer:
+              enabled: false
+              port: 443
+            nodePort:
+              enabled: false
+            route:
+              enabled: true
+          persistence:
+            persistentVolumeClaim:
+              claimName: stackrox-db
+        egress:
+          connectivityPolicy: Online
+        scanner:
+          analyzer:
+            scaling:
+              autoScaling: Enabled
+              maxReplicas: 5
+              minReplicas: 2
+              replicas: 3
+          scannerComponent: Enabled
+  tags:
+  - acs      
+     
+

@@ -1,0 +1,9 @@
+---
+- hosts: rhpdsclusters
+  gather_facts: false
+  vars_files:
+    - ../vars.yml
+  tasks:
+    - import_role:
+        name: prepare-host
+...

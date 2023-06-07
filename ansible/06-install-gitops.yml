@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  tags: gitops
+  vars_files:
+  - ../vars.yml
+  tasks:
+  - import_role:
+      name: gitops
+      tasks_from: install-gitops.yml
