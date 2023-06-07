@@ -15,6 +15,7 @@ Currently supported component installation:
 - OpenShift GitOps
 - ACS
 - ACM
+- Web Terminal
 
 ## Run Options
 
@@ -136,6 +137,7 @@ The following tags are available
 - gitops
 - acs
 - acm
+- webterminal
 
 For example this command will skip the DevSpaces and ACM installation
 
@@ -179,14 +181,8 @@ As the full workshop takes more than a day to complete, there are chapters than 
 
 Make sure to add a filter to the lab guide to exclude these chapters when running this customized workshop as explained in https://github.com/devsecops-workshop/workshop-guide#live-customizing-of-the-guide
 
-### Skip an Automate Chapter "Install Prerequisites Cluster"
+### Skip and Automate Chapter "Install Prerequisites Cluster"
 
 ```bash
 ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces,pipelines,gitops,acs,acm
-```
-
-### Skip an Automate Chapters "Install Prerequisites Cluster" and "Inner Loop"
-
-```bash
-ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=pipelines,gitops,acs,acm
 ```
