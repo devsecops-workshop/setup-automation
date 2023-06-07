@@ -127,15 +127,15 @@ You can choose to skip certain components by applying tags
 The following tags are available
 
 - prepare (must always be executed)
-- acm
-- devspaces
 - gitea
 - gitea_repo
 - odf
 - quay
-- acs
+- devspaces
 - pipelines
 - gitops
+- acs
+- acm
 
 For example this command will skip the DevSpaces and ACM installation
 
@@ -171,4 +171,22 @@ ansible-builder build \
     --tag quay.io/sifa/devsecops-workshop:devel
 
 podman push quay.io/sifa/devsecops-workshop:devel
+```
+
+## Facilitator Notes
+
+As the full workshop takes more than a day to complete, there are chapters than you can automate and skip in the workshop.
+
+Make sure to add a filter to the lab guide to exclude these chapters when running this customized workshop as explained in https://github.com/devsecops-workshop/workshop-guide#live-customizing-of-the-guide
+
+### Skip an Automate Chapter "Install Prerequisites Cluster"
+
+```bash
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces,pipelines,gitops,acs,acm
+```
+
+### Skip an Automate Chapters "Install Prerequisites Cluster" and "Inner Loop"
+
+```bash
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=pipelines,gitops,acs,acm
 ```
