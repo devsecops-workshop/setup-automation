@@ -2,6 +2,8 @@
 
 Ansible automation to install and configure components of the workshop. For example to test the workshop or skip to certain chapters.
 
+Currently supported OpenShift version 4.12
+
 Currently supported component installation:
 
 - Gitea (including repos)
@@ -47,6 +49,7 @@ subscription-manager repos \
 yum install -y ansible-navigator git podman
 
 ```
+
 Note: If using a bastion on RHPDS or RHDP environments you need to unregister from the lab Satellite server and switch to the Red Hat cdn base url:
 
 ```
@@ -63,7 +66,6 @@ baseurl = https://cdn.redhat.com
 ```
 
 Then proceed as above.
-
 
 ### Installation Centos Stream 8
 
@@ -97,11 +99,11 @@ cp inventory/custom_hosts.ini.template inventory/custom_hosts.ini
 and replace <SSH JUMPHOST HOSTNAME> with the bastion hostname and <SSH_USER> and <SSH_PASSWORD>
 
 If running Ansible on the bastion host, the inventory should look like:
-    
+
 ```
 <internal bastion IP> ansible_user=lab-user ansible_password=<SSH password>
 ```
-    
+
 ## Check and adjust the path to kubeconfig on your bastion
 
 The path is defined in `vars.yml` as _remote_kubeconfig_path_.
@@ -125,15 +127,15 @@ You can choose to skip certain components by applying tags
 The following tags are available
 
 - prepare (must always be executed)
-- acm
-- devspaces
 - gitea
 - gitea_repo
 - odf
 - quay
-- acs
+- devspaces
 - pipelines
 - gitops
+- acs
+- acm
 
 For example this command will skip the DevSpaces and ACM installation
 
@@ -169,4 +171,22 @@ ansible-builder build \
     --tag quay.io/sifa/devsecops-workshop:devel
 
 podman push quay.io/sifa/devsecops-workshop:devel
+```
+
+## Facilitator Notes
+
+As the full workshop takes more than a day to complete, there are chapters than you can automate and skip in the workshop.
+
+Make sure to add a filter to the lab guide to exclude these chapters when running this customized workshop as explained in https://github.com/devsecops-workshop/workshop-guide#live-customizing-of-the-guide
+
+### Skip an Automate Chapter "Install Prerequisites Cluster"
+
+```bash
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces,pipelines,gitops,acs,acm
+```
+
+### Skip an Automate Chapters "Install Prerequisites Cluster" and "Inner Loop"
+
+```bash
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=pipelines,gitops,acs,acm
 ```
