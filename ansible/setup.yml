@@ -8,3 +8,4 @@
 - import_playbook: 06-install-gitops.yml
 - import_playbook: 07-install-acs.yml
 - import_playbook: 08-install-acm.yml
+- import_playbook: 09-install-webterminal.yml

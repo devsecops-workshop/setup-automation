@@ -1,0 +1,39 @@
+---
+
+- name: Install Web Terminal Operator Subscription
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    definition: "{{ lookup('file', 'operator-subscription.yml' ) | from_yaml }}"
+  tags: webterminal
+
+- name: "Get Installed CSV"
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ k8s_kubeconfig }}"
+    api_version: operators.coreos.com/v1alpha1
+    kind: Subscription
+    name: "web-terminal"
+    namespace: "openshift-operators"
+  register: r_subscription
+  retries: 30
+  delay: 5
+  until:
+    - r_subscription.resources[0].status.currentCSV is defined
+    - r_subscription.resources[0].status.currentCSV | length > 0
+  tags: webterminal 
+
+- name: "Wait until CSV is installed"
+  kubernetes.core.k8s_info:
+    api_version: operators.coreos.com/v1alpha1
+    kind: ClusterServiceVersion
+    name: "{{ r_subscription.resources[0].status.currentCSV }}"
+    namespace: "openshift-marketplace"
+  register: r_csv
+  retries: 30
+  delay: 30
+  until:
+    - r_csv.resources[0].status.phase is defined
+    - r_csv.resources[0].status.phase | length > 0
+    - r_csv.resources[0].status.phase == "Succeeded"   
+  tags: webterminal   
+ 
