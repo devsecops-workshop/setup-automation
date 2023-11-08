@@ -142,7 +142,7 @@ The following tags are available
 For example this command will skip the DevSpaces and ACM installation
 
 ```
-ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces, acm
+ansible-navigator run -m stdout ansible/setup.yml -i inventory/custom_hosts.ini --skip-tags=devspaces,acm
 ```
 
 #### Other configurations
