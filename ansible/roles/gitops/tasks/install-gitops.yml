@@ -46,7 +46,7 @@
     state: present
     kubeconfig: "{{ k8s_kubeconfig }}"
     definition:
-      apiVersion: argoproj.io/v1alpha1
+      apiVersion: argoproj.io/v1beta1
       kind: ArgoCD
       metadata:
         name: argocd
