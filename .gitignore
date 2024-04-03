@@ -4,3 +4,4 @@ ansible-navigator.v1
 ansible-navigator.log
 *.log
 setup-artifact*
+ansible/quay_token.json
